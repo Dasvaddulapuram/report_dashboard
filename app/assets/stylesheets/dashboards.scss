@@ -1,0 +1,186 @@
+// Place all the styles related to the dashboards controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+select.filter-report {
+  display: inline-block;
+  vertical-align: middle;
+  background: transparent;
+  height: 35px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 15px;
+  border-color: #ccc;
+  border-width: 1px;
+  color: #6b6b6b;
+  font-weight: 600;
+  margin: 0px 3px;
+}
+
+#dashboard-data #table-1 {
+  margin-top: 15px;
+}
+
+#dashboard-data thead th, #dashboard-data tbody td {
+  text-align: center;
+}
+
+#month, #week, #start_date{
+  display: none;
+}
+
+.reload-link{
+  color: white;
+}
+
+.rds_availability_section {
+  display: block;
+  width: 100%;
+  padding-top: 17px;
+}
+
+#start_date {
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 15px;
+  color: #6b6b6b;
+  font-weight: 600;
+  margin: 0px 3px;
+  vertical-align: middle;
+}
+
+.rds_availability_section #submit-button {
+  margin-top: 17px;
+  margin-bottom: 17px;
+}
+
+.seperator {
+  display: block;
+  padding-top: 20px;
+  border-top: 1px solid #3ba745;
+  margin-top: 40px;
+}
+
+select#month option {
+  &[disabled] {
+    font-weight : normal;
+  }
+  font-weight: bold;
+}
+
+#table-1 {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#table-1 td, #table-1 th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#table-1 tr:nth-child(even){background-color: #f2f2f2;}
+
+#table-1 tr:hover {background-color: #ddd;}
+
+#table-1 th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+#table-2 {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#table-2 td, #table-2 th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+#table-2 tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+#submit-button {
+  border: none;
+  background: #4CAF50;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+div#table-2_length {
+  margin-bottom: 15px;
+}
+
+.rds_availability_section h4 {
+  margin-top: 0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  text-align: center;
+  position: relative;
+  background: #5f5f5f;
+  margin-bottom: 0px;
+  color: #fff;
+  padding: 15px;
+}
+
+.header .home-link {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+}
+
+.header h1 {
+  margin-bottom: 10px;
+  margin: 0;
+  font-size: 20px;
+}
+
+#dashboard-data {  
+  max-width: 1400px;
+  width: 100%;
+  padding: 0 15px;
+}
+
+.lowest-percent{
+  background-color: #F08080;
+}
+
+.medium-percent{
+  background-color: #FAFAD2;
+}
+
+.full-percent{
+  background-color: #90EE90;
+}
+
+.default-report{
+  color: #7c2c2cb5;
+}
+
+.saprate-rows{
+  background-color: #ffffff;
+  border-bottom: 1px solid black  !important;
+  border-right-color: #ffffff !important;
+  border-left-color: #ffffff !important;
+}

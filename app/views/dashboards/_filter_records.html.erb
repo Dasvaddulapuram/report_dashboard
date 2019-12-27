@@ -1,0 +1,120 @@
+<% if !@results.nil? && @results.count > 0  %>
+  <% if params[:default] %>
+    <h4 class="default-report">Default report of four weeks From <%= @start_date.strftime("%d %B %Y") %> To <%= @end_date.strftime("%d %B %Y") %></h4>
+  <% else %>
+    <h4><%= params[:report_type] %> From <%= @start_date.strftime("%d %B %Y") %> To <%= @end_date.strftime("%d %B %Y") %></h4>
+  <% end %>
+  <% unless params[:report_type] == "Daily Report" %>
+    <b>Below is detail about overall availablity of System Group for the Role and the Region</b>
+    <!-- first table for weekly and monthly report -->
+    <table id="table-1">
+      <thead>
+        <tr>
+          <th>System Group</th>
+          <th>Role</th>
+          <th>Region</th> 
+          <th>% Availability</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @region_query.present? %>
+          <% new_system_grp = nil %>
+          <% @region_query.each do |sys_group| %>
+            <% if new_system_grp == sys_group[:system_group] || new_system_grp.nil? %>
+                <% new_system_grp = sys_group[:system_group] %>
+            <% else %>
+              <% new_system_grp = sys_group[:system_group] %>
+               <tr><td class="saprate-rows" colspan="6"></td></tr>
+            <% end %>
+            <tr>
+              <td><%= sys_group[:system_group]  %></td>
+              <td><%= @role_under_system_group.split(",").join(', ') %></td>
+              <td><%= sys_group[:region] %></td>
+              <% if params[:week].present? || params[:month].present? %>  
+                <% calcuated_percent = overall_weekly_and_monthly_percentage(sys_group[:result].inject(0) {|sum, hash| sum + hash["max_mins"].to_i}, sys_group[:result].count) %>
+                <% if calcuated_percent >= 100 %>
+                  <td class="full-percent"><%= "#{calcuated_percent}" %></td>
+                <% elsif calcuated_percent >= 99 &&  calcuated_percent < 100 %>
+                  <td class="medium-percent"><%= "#{calcuated_percent}" %></td>
+                <% else %>
+                  <td class="lowest-percent"><%= "#{calcuated_percent}" %></td>
+                <% end %>
+              <% end %>
+            </tr>
+          <% end %>
+        <% else %>
+          <td><%= @selected_system_groups.split(",").join(', ') %></td>
+          <td><%= @role_under_system_group.split(",").join(', ') %></td>
+          <td><%= @region_under_system_group.split(",").join(', ') %></span></td>
+          <% if params[:week].present? || params[:month].present? %>  
+            <% calcuated_percent = overall_weekly_and_monthly_percentage(@results.inject(0) {|sum, hash| sum + hash["max_mins"].to_i}, @results.count) %>
+            <% if calcuated_percent >= 100 %>
+              <td class="full-percent"><%= "#{calcuated_percent}" %></td>
+            <% elsif calcuated_percent >= 99 &&  calcuated_percent < 100 %>
+              <td class="medium-percent"><%= "#{calcuated_percent}" %></td>
+            <% else %>
+              <td class="lowest-percent"><%= "#{calcuated_percent}" %></td>
+            <% end %>
+          <% end %>  
+        <% end %>
+      </tbody>
+    </table>
+    <!-- end table -->
+  <% end %>
+  <% if params[:report_type] != "Daily Report" %>
+    <div class="seperator"></div>
+  <% end %>
+  <h4>% Percentage Availablity at DB CLUSTER Level</h4>
+  <!-- start table at db cluster level -->
+  <table id="table-2" class="datatable">
+    <thead >
+      <tr>
+        <th>Db Cluster Id</th>
+        <th>Role</th>
+        <th>Region</th>
+        <% if params[:start_date].present? %>
+          <th>Available Mins</th>
+          <th>Period Mins</th>
+        <% end %>          
+        <th>% Availability</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @results.each do |result| %>
+        <% if params[:week].present? || params[:month].present? %>
+          <tr>
+            <td><%= result["db_cluster_id"] %></td>
+            <td><%= result["role"] %></td>
+            <td><%= result["region"] %></td>
+            <% if result["max_mins"].to_i >= DashboardsHelper::TOTAL_MINUTES %>  
+              <td class="full-percent">100</td>
+            <% elsif daily_percentage(result["max_mins"].to_i) >= 99 && daily_percentage(result["max_mins"].to_i) < 100 %>  
+              <td class="medium-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+            <% else %>
+              <td class="lowest-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+            <% end %>            
+          </tr> 
+        <% else %>
+          <tr>
+            <td><%= result["db_cluster_id"] %></td>
+            <td><%= result["role"] %></td>
+            <td><%= result["region"] %></td>
+            <td><%= result["max_mins"] %></td>
+            <td><%= result["period_mins"] %></td>
+            <% if result["max_mins"].to_i >= DashboardsHelper::TOTAL_MINUTES %>  
+              <td class="full-percent">100</td>
+            <% elsif daily_percentage(result["max_mins"].to_i) >= 99 && daily_percentage(result["max_mins"].to_i) < 100 %>  
+              <td class="medium-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+            <% else %>
+              <td class="lowest-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+            <% end %>          
+          </tr>  
+        <% end %>  
+      <% end %>  
+    </tbody>
+  </table>
+  <!-- end table at db cluster level -->
+<% else %>
+  <p></p>
+  <b>No Record Found</b>
+<% end %>

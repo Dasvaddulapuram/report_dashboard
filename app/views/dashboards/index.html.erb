@@ -1,0 +1,41 @@
+<div class="header"><a href="/dbfleet_rds_availbility" class="home-link">Refresh</a> <h1>RDS Availablity Dashboard</h1></div>
+<center class="rds_availability_section">
+  <!-- start search form tag -->
+  <%= form_tag dashboards_path, method: :get do %>
+    <%= select_tag(:report_type, options_for_select(["Monthly Report", "Weekly Report", "Daily Report"], selected: params[:report_type]), prompt: "Select Report Type", class: "filter-report" ) %>
+    <%= select_tag(:month, options_for_select(@months, selected: params[:month], disabled: ['January', 'February', 'March']), prompt: "Select Month", class: "filter-report") %>
+    <%= text_field_tag :start_date, params[:start_date], class: 'datepicker', autocomplete: :off %> 
+    <select name="week" id="week" class="filter-report">
+      <% if params[:week].present? && params[:default].nil? %>
+        <% start_date, end_date = week_dates(@current_year, params[:week].to_i) %>
+        <option value="<%= params[:week] %>" selected><%= start_date_end_date_format(start_date, end_date, params[:week]) %></option>
+      <% else %>  
+        <option value="">Select Week Number</option>
+      <% end %>
+      <% @total_weeks.each do |week_no| %>
+        <% start_date, end_date = week_dates(@current_year, week_no) %>
+        <% if week_no > 14 %>
+          <option style="font-weight: bold;" value="<%= week_no %>"><%= start_date_end_date_format(start_date, end_date, week_no) %></option>
+        <% else %>
+          <option value="<%= week_no %>" disabled><%= start_date_end_date_format(start_date, end_date, week_no) %></option>
+        <% end %>
+      <% end %>  
+    </select>
+    <p></p>
+    <% if params[:system_group].kind_of?(Array) %>
+      <%= select_tag(:system_group, options_for_select(@system_groups), prompt: "Select System Group", class: "filter-report") %>
+    <% else %>
+      <%= select_tag(:system_group, options_for_select(@system_groups, selected: params[:system_group]), prompt: "Select System Group", class: "filter-report") %>
+    <% end %>
+    <%= select_tag(:role, options_for_select(["READER", "WRITER"], selected: params[:role]), prompt: "Select Role", class: "filter-report") %>
+    <%= select_tag(:region, options_for_select(@regions, selected: params[:region]), prompt: "Select Region", class: "filter-report") %>
+    <div></div>
+    <%= submit_tag "Filter", id: "submit-button" %>
+  <% end %>
+  <!-- end search form tag -->
+
+  <!-- render table data -->
+  <div id="dashboard-data">
+    <%= render :partial => 'filter_records' %>
+  </div>
+</center>
