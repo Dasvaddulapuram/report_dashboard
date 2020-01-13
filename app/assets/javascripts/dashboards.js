@@ -62,11 +62,11 @@ $( document ).on('turbolinks:load', function() {
       alert("Please select month or week number or date")
       return false;
     }
-    else if ( (report_type == "Weekly Report" || report_type == "Monthly Report") && year == '')
-    {
-      alert("Please select year")
-      return false;
-    }
+    // else if ( (report_type == "Weekly Report" || report_type == "Monthly Report") && year == '')
+    // {
+    //   alert("Please select year")
+    //   return false;
+    // }
     else if (system_group == ""){
       alert("Please select any system group")
       return false;
