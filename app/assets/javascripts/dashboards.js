@@ -19,18 +19,23 @@ $( document ).on('turbolinks:load', function() {
       $("#start_date").hide();
       $("#start_date").val('');
       $("#week").val('');   
+      $("#year").show();
     }else if (filter_type == "Weekly Report"){
       $("#week").show();
       $("#month").hide();
       $("#start_date").hide();
       $("#start_date").val('');
-      $("#month").val('');     
+      $("#month").val('');
+      $("#year").val('');
+      $("#year").hide();
     }else if (filter_type == "Daily Report"){
       $("#week").hide();
       $("#month").hide();
       $("#start_date").show();
       $("#week").val('');
       $("#month").val('');
+      $("#year").val('');
+      $("#year").hide();
     }else{
       $("#week").val('');
       $("#month").val('');
@@ -38,6 +43,7 @@ $( document ).on('turbolinks:load', function() {
       $("#week").hide();
       $("#month").hide();
       $("#start_date").hide();
+      $("#year").hide();
     }
   });
 
@@ -47,12 +53,18 @@ $( document ).on('turbolinks:load', function() {
     var month =   $("#month").val();
     var start_date = $("#start_date").val();
     var report_type = $("#report_type").val();
+    var year = $("#year").val();
     if (report_type == "") {
       alert("Please select report type")
       return false;
     }else if (week == "" && month == "" && start_date == "")
     {
       alert("Please select month or week number or date")
+      return false;
+    }
+    else if ( (report_type == "Weekly Report" || report_type == "Monthly Report") && year == '')
+    {
+      alert("Please select year")
       return false;
     }
     else if (system_group == ""){
@@ -64,6 +76,7 @@ $( document ).on('turbolinks:load', function() {
   var month_value = $("#month").val();
   var week_value = $("#week").val();
   var start_date_value = $('#start_date').val();
+  var year_value = $('#year').val();
   if(month_value != "")
   {
     $("#month").show();
@@ -73,6 +86,9 @@ $( document ).on('turbolinks:load', function() {
   }else if (start_date_value != "")
   {
     $("#start_date").show();
+  }else if(year_value != "")
+  {
+    $("#year").show();
   }
 
   $('.datatable').DataTable( {

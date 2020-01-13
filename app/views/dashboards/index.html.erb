@@ -3,24 +3,31 @@
   <!-- start search form tag -->
   <%= form_tag dashboards_path, method: :get do %>
     <%= select_tag(:report_type, options_for_select(["Monthly Report", "Weekly Report", "Daily Report"], selected: params[:report_type]), prompt: "Select Report Type", class: "filter-report" ) %>
-    <%= select_tag(:month, options_for_select(@months, selected: params[:month], disabled: ['January', 'February', 'March']), prompt: "Select Month", class: "filter-report") %>
+    <%= select_tag(:month, options_for_select(@months, selected: params[:month]), prompt: "Select Month", class: "filter-report") %>
     <%= text_field_tag :start_date, params[:start_date], class: 'datepicker', autocomplete: :off %> 
     <select name="week" id="week" class="filter-report">
       <% if params[:week].present? && params[:default].nil? %>
-        <% start_date, end_date = week_dates(@current_year, params[:week].to_i) %>
+        <% start_date, end_date = week_dates(params[:year].to_i, params[:week].to_i) %>
         <option value="<%= params[:week] %>" selected><%= start_date_end_date_format(start_date, end_date, params[:week]) %></option>
-      <% else %>  
+      <% else %>
         <option value="">Select Week Number</option>
       <% end %>
       <% @total_weeks.each do |week_no| %>
-        <% start_date, end_date = week_dates(@current_year, week_no) %>
-        <% if week_no > 14 %>
+        <% start_date, end_date = week_dates(params[:year].to_i, week_no) %>
+        <%# if week_no > 14 %>
           <option style="font-weight: bold;" value="<%= week_no %>"><%= start_date_end_date_format(start_date, end_date, week_no) %></option>
-        <% else %>
-          <option value="<%= week_no %>" disabled><%= start_date_end_date_format(start_date, end_date, week_no) %></option>
-        <% end %>
+        <%# else %>
+          <!-- <option value="<%#= week_no %>" disabled><%#= start_date_end_date_format(start_date, end_date, week_no) %></option> -->
+        <%# end %>
       <% end %>  
     </select>
+      <select name="year" id="year" class="filter-report">
+        <option style="font-weight: bold;" value="">Select Year</option>
+        <% (2019..Date.today.year).each do |t| %>
+              <% selected =  (t == params["year"]) ? "selected" : '' %>
+              <option style="font-weight: bold;" value="<%= t %>" <%= selected %> ><%= t %></option>
+        <% end %>
+      </select>
     <p></p>
     <% if params[:system_group].kind_of?(Array) %>
       <%= select_tag(:system_group, options_for_select(@system_groups), prompt: "Select System Group", class: "filter-report") %>
