@@ -1,0 +1,5 @@
+<option value="" selected>Select Week Number </option>
+<% @total_weeks.each do |week_no| %>
+  <% start_date, end_date = week_dates(params[:year].to_i, week_no) %>
+	<option style="font-weight: bold;" value="<%= week_no %>"><%= start_date_end_date_format(start_date, end_date, week_no) %></option>
+<% end %>

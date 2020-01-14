@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
   resources :dashboards
   root 'dashboards#index'
-  get 'dbfleet_rds_availbility', :to => 'dashboards#dbfleet_rds_availbility'
+  get 'weekly_dates', :to => 'dashboards#weekly_dates'
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 

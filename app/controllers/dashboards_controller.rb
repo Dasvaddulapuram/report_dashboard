@@ -1,10 +1,9 @@
 class DashboardsController < ApplicationController
   include DashboardsHelper
-  before_action :list_of_month_and_week
+  before_action :list_of_month_and_week, only: :index
 
   def index
     @system_groups = iterate_regions_roles_system_groups(system_groups_and_regions, 'system_group')
-    Rails.logger.info "User.size: #{}"
     @regions = iterate_regions_roles_system_groups(system_groups_and_regions, 'region')
     if params[:start_date].present?
       @start_date = params[:start_date].to_date
@@ -45,7 +44,11 @@ class DashboardsController < ApplicationController
     end
   end
 
-  def dbfleet_rds_availbility
+  def weekly_dates
+    @current_year = params[:year].to_i
+    @total_weeks =  (Date.today.year == params[:year].to_i) ? (Date.today.cweek - 1) : 52
+    @total_weeks = (1..@total_weeks).to_a
+    render json: { html: render_to_string(partial: 'weekly_dates') }
   end
 
   private
@@ -53,8 +56,12 @@ class DashboardsController < ApplicationController
   def list_of_month_and_week
     # pdt datetime format
     current_date = Time.now.in_time_zone('Pacific Time (US & Canada)')
-    @current_year = current_date.year
-    @total_weeks = (Date.today.cweek - 1)
+    @current_year = (params[:year].present?) ? params[:year].to_i : current_date.year
+    if (Date.today.year == params[:year].to_i || params[:year].nil?)
+      @total_weeks = Date.today.cweek - 1
+    elsif params[:year].present?
+      @total_weeks = 52
+    end
     if params[:week].nil? && params[:report_type].nil? && params[:system_group].nil?
       default_dashboard_report
     end

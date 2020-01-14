@@ -22,12 +22,11 @@ $( document ).on('turbolinks:load', function() {
       $("#year").show();
     }else if (filter_type == "Weekly Report"){
       $("#week").show();
-      $("#month").hide();
-      $("#start_date").hide();
       $("#start_date").val('');
+      $("#start_date").hide();
       $("#month").val('');
-      $("#year").val('');
-      $("#year").hide();
+      $("#month").hide();
+      $("#year").show();
     }else if (filter_type == "Daily Report"){
       $("#week").hide();
       $("#month").hide();
@@ -62,11 +61,11 @@ $( document ).on('turbolinks:load', function() {
       alert("Please select month or week number or date")
       return false;
     }
-    // else if ( (report_type == "Weekly Report" || report_type == "Monthly Report") && year == '')
-    // {
-    //   alert("Please select year")
-    //   return false;
-    // }
+    else if ((report_type == "Monthly Report" && year == '') || (report_type == "Weekly Report" && year == '') )
+    {
+      alert("Please select year")
+      return false;
+    }
     else if (system_group == ""){
       alert("Please select any system group")
       return false;
@@ -80,15 +79,14 @@ $( document ).on('turbolinks:load', function() {
   if(month_value != "")
   {
     $("#month").show();
+    $("#year").show();
   }else if(week_value != "")
   {
     $("#week").show();
+    $("#year").show();
   }else if (start_date_value != "")
   {
     $("#start_date").show();
-  }else if(year_value != "")
-  {
-    $("#year").show();
   }
 
   $('.datatable').DataTable( {
@@ -96,5 +94,22 @@ $( document ).on('turbolinks:load', function() {
     "lengthMenu": [50, 75, 100]
   } );
   $(".dataTables_filter").hide();
+
+  $('#year').on('change', function() {
+    var rep_type = $("#report_type").val();
+    var year = this.value ;
+    if (rep_type == "Weekly Report")
+    {
+
+      $.ajax({
+        url: '/weekly_dates',
+        type: 'GET',
+        data: {year: year},
+        success: function(data) {
+          $("#week").html(data.html)
+        }
+      });
+    }
+  });
 
 });
