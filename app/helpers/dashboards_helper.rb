@@ -17,11 +17,11 @@ module DashboardsHelper
   # query to get filter record by metric_date, system_group, role, etc
   def common_filter_query(system_group, role, region, start_date, end_date)
     sql = if system_group.present? && role.present? && region.present?
-            "SELECT * FROM rptv_avai_tables WHERE (system_group = '#{system_group}' AND region = '#{region}' AND role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') order by metric_date"
+            "SELECT * FROM fleet.rptv_availability WHERE (system_group = '#{system_group}' AND region = '#{region}' AND role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') order by metric_date"
           elsif (system_group.present? && region.present?) || (system_group.present? && role.present?) || (region.present? && role.present?)
-            "SELECT * FROM rptv_avai_tables WHERE ((system_group = '#{system_group}' AND region = '#{region}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (system_group = '#{system_group}' AND role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (region = '#{region}' AND role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}')) order by metric_date"
+            "SELECT * FROM fleet.rptv_availability WHERE ((system_group = '#{system_group}' AND region = '#{region}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (system_group = '#{system_group}' AND role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (region = '#{region}' AND role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}')) order by metric_date"
           elsif system_group.present? || region.present? || role.present?
-            "SELECT * FROM rptv_avai_tables WHERE ((system_group = '#{system_group}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (region ='#{region}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}')) order by metric_date"
+            "SELECT * FROM fleet.rptv_availability WHERE ((system_group = '#{system_group}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (region ='#{region}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}') OR (role = '#{role}' AND metric_date >= '#{start_date}' AND metric_date <= '#{end_date}')) order by metric_date"
     end
     # This command will return a set of values as a hash and put them into the results variable
     results = ActiveRecord::Base.connection.execute(sql)
@@ -29,9 +29,19 @@ module DashboardsHelper
   end
 
   # fetching week's start date and end date
-  def week_dates(year, week_no)
-    week_start = Date.commercial(year, week_no, 1)
-    week_end = Date.commercial(year, week_no, 7)
+  def week_dates(year, week_no, default)
+    if default
+      if week_no > 3
+        start_week = week_no - 3
+      else
+        start_week = 1
+      end
+      week_start = Date.commercial(year, start_week, 1)
+      week_end = Date.commercial(year, week_no, 7)   
+    else
+      week_start = Date.commercial(year, week_no, 1)
+      week_end = Date.commercial(year, week_no, 7)
+    end 
     all_dates = (week_start..week_end).to_a
     [week_start, week_end, all_dates]
   end
@@ -39,7 +49,8 @@ module DashboardsHelper
   # fetch uniq system groups and regions to show in drop down
   def system_groups_and_regions
     uniq_records = 'select distinct system_group, region from
-                    rptv_avai_tables;'
+                    fleet.rptv_availability;'
+
     ActiveRecord::Base.connection.execute(uniq_records)
   end
 

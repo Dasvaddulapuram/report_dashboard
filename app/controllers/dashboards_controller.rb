@@ -2,23 +2,21 @@ class DashboardsController < ApplicationController
   include DashboardsHelper
   before_action :list_of_month_and_week, only: :index
 
-  def index
+  def dbfleet_rds_availbility
     @system_groups = iterate_regions_roles_system_groups(system_groups_and_regions, 'system_group')
     @regions = iterate_regions_roles_system_groups(system_groups_and_regions, 'region')
     if params[:start_date].present?
       @start_date = params[:start_date].to_date
       @end_date = @start_date
     elsif params[:week].present?
-     # @current_year1 = params[:year].present? ? params[:year].to_i : @current_year
-      @start_date, @end_date, @all_dates = week_dates(@current_year, params[:week].to_i)
+      @start_date, @end_date, @all_dates = week_dates(@current_year, params[:week].to_i, false)
     elsif params[:month].present?
       @start_date = "#{params['year']}-#{params[:month]}-01".to_date
       @end_date = @start_date.end_of_month
     end
     @region_query = []
     if params[:system_group].kind_of?(Array)
-      @current_year = Date.today.strftime("%Y-%m-%d") >= ("2020-01-27") ? @current_year : @current_year - 1
-      @start_date = week_dates(@current_year, params[:week].to_i - 3).first
+      @start_date, @end_date, @all_dates = week_dates(@current_year, params[:week].to_i, true)
       @selected_system_groups = [{system_group: 'AFT-ITS', region: 'NA'}, {system_group: 'AFT-ITS', region: 'EU'}, {system_group: 'AFT-ITS', region: 'JP'},
                                  {system_group: 'EFP-POSTGRES', region: 'NA'}, {system_group: 'EFP-POSTGRES', region: 'EU'}, {system_group: 'EFP-POSTGRES', region: 'JP'},
                                  {system_group: 'AFT-INBOUND', region: 'NA'}, {system_group: 'AFT-INBOUND', region: 'EU'}, {system_group: 'AFT-INBOUND', region: 'JP'},
@@ -26,11 +24,11 @@ class DashboardsController < ApplicationController
                                  {system_group: 'AFT-FCLM', region: 'NA'}, {system_group: 'AFT-FCLM', region: 'EU'}, {system_group: 'AFT-FCLM', region: 'JP'}, 
         ]  
       @selected_system_groups.each do |group|
-        result = common_filter_query(group[:system_group], 'WRITER', group[:region], @start_date, @end_date)
+        result = [] # common_filter_query(group[:system_group], 'WRITER', group[:region], @start_date, @end_date)
         group[:result] = result
         @region_query << group
       end
-      results = "SELECT * FROM rptv_avai_tables WHERE (system_group in ('AFT-ITS', 'EFP-POSTGRES', 'AFT-INBOUND', 'AFT-VENDORFLEX', 'AFT-FCLM') AND role = '#{@role_under_system_group[0]}' AND metric_date >= '#{@start_date}' AND metric_date <= '#{@end_date}')"
+      results = "SELECT * FROM fleet.rptv_availability WHERE (system_group in ('AFT-ITS', 'EFP-POSTGRES', 'AFT-INBOUND', 'AFT-VENDORFLEX', 'AFT-FCLM') AND role = '#{@role_under_system_group[0]}' AND metric_date >= '#{@start_date}' AND metric_date <= '#{@end_date}')"
       
       @results = ActiveRecord::Base.connection.execute(results)
     elsif (params[:report_type].present? && params[:start_date].present? && params[:system_group].present?) || (params[:report_type].present? && params[:week].present? && params[:system_group].present?) || (params[:report_type].present? && params[:month].present? && params[:system_group].present?)

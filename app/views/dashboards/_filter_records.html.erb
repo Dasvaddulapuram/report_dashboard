@@ -31,7 +31,7 @@
               <td><%= @role_under_system_group.split(",").join(', ') %></td>
               <td><%= sys_group[:region] %></td>
               <% if params[:week].present? || params[:month].present? %>  
-                <% calcuated_percent = overall_weekly_and_monthly_percentage(sys_group[:result].inject(0) {|sum, hash| sum + hash["max_mins"].to_i}, sys_group[:result].count) %>
+                <% calcuated_percent = overall_weekly_and_monthly_percentage(sys_group[:result].inject(0) {|sum, hash| sum + hash["avail_mins"].to_i}, sys_group[:result].count) %>
                 <% if calcuated_percent >= 100 %>
                   <td class="full-percent"><%= "#{calcuated_percent}" %></td>
                 <% elsif calcuated_percent >= 99 &&  calcuated_percent < 100 %>
@@ -47,7 +47,7 @@
           <td><%= @role_under_system_group.split(",").join(', ') %></td>
           <td><%= @region_under_system_group.split(",").join(', ') %></span></td>
           <% if params[:week].present? || params[:month].present? %>  
-            <% calcuated_percent = overall_weekly_and_monthly_percentage(@results.inject(0) {|sum, hash| sum + hash["max_mins"].to_i}, @results.count) %>
+            <% calcuated_percent = overall_weekly_and_monthly_percentage(@results.inject(0) {|sum, hash| sum + hash["avail_mins"].to_i}, @results.count) %>
             <% if calcuated_percent >= 100 %>
               <td class="full-percent"><%= "#{calcuated_percent}" %></td>
             <% elsif calcuated_percent >= 99 &&  calcuated_percent < 100 %>
@@ -86,12 +86,12 @@
             <td><%= result["db_cluster_id"] %></td>
             <td><%= result["role"] %></td>
             <td><%= result["region"] %></td>
-            <% if result["max_mins"].to_i >= DashboardsHelper::TOTAL_MINUTES %>  
+            <% if result["avail_mins"].to_i >= DashboardsHelper::TOTAL_MINUTES %>  
               <td class="full-percent">100</td>
-            <% elsif daily_percentage(result["max_mins"].to_i) >= 99 && daily_percentage(result["max_mins"].to_i) < 100 %>  
-              <td class="medium-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+            <% elsif daily_percentage(result["avail_mins"].to_i) >= 99 && daily_percentage(result["avail_mins"].to_i) < 100 %>  
+              <td class="medium-percent"><%= daily_percentage(result["avail_mins"].to_i) %></td>
             <% else %>
-              <td class="lowest-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+              <td class="lowest-percent"><%= daily_percentage(result["avail_mins"].to_i) %></td>
             <% end %>            
           </tr> 
         <% else %>
@@ -99,14 +99,14 @@
             <td><%= result["db_cluster_id"] %></td>
             <td><%= result["role"] %></td>
             <td><%= result["region"] %></td>
-            <td><%= result["max_mins"] %></td>
+            <td><%= result["avail_mins"] %></td>
             <td><%= result["period_mins"] %></td>
-            <% if result["max_mins"].to_i >= DashboardsHelper::TOTAL_MINUTES %>  
+            <% if result["avail_mins"].to_i >= DashboardsHelper::TOTAL_MINUTES %>  
               <td class="full-percent">100</td>
-            <% elsif daily_percentage(result["max_mins"].to_i) >= 99 && daily_percentage(result["max_mins"].to_i) < 100 %>  
-              <td class="medium-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+            <% elsif daily_percentage(result["avail_mins"].to_i) >= 99 && daily_percentage(result["avail_mins"].to_i) < 100 %>  
+              <td class="medium-percent"><%= daily_percentage(result["avail_mins"].to_i) %></td>
             <% else %>
-              <td class="lowest-percent"><%= daily_percentage(result["max_mins"].to_i) %></td>
+              <td class="lowest-percent"><%= daily_percentage(result["avail_mins"].to_i) %></td>
             <% end %>          
           </tr>  
         <% end %>  
