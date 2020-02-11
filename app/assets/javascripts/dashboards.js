@@ -2,7 +2,7 @@
 // All this logic will automatically be available in application.js.
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
-$( document ).on('turbolinks:load', function() {
+$(document).ready(function(){
   // $('.datepicker').datepicker({
   //   format: 'dd/mm/yyyy',
   //   endDate: '-1d',
@@ -21,7 +21,6 @@ $( document ).on('turbolinks:load', function() {
       $("#week").val('');   
       $("#year").show();
     }else if (filter_type == "Weekly Report"){
-      $("#week").show();
       $("#start_date").val('');
       $("#start_date").hide();
       $("#month").val('');
@@ -98,9 +97,9 @@ $( document ).on('turbolinks:load', function() {
   $('#year').on('change', function() {
     var rep_type = $("#report_type").val();
     var year = this.value ;
-    if (rep_type == "Weekly Report")
+    if ((rep_type == "Weekly Report") && (year > 0))
     {
-
+      $("#week").show();
       $.ajax({
         url: '/weekly_dates',
         type: 'GET',
@@ -109,6 +108,9 @@ $( document ).on('turbolinks:load', function() {
           $("#week").html(data.html)
         }
       });
+    }
+    else{
+      $("#week").hide();
     }
   });
 

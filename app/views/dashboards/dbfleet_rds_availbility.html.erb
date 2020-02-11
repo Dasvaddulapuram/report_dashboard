@@ -2,7 +2,7 @@
 </br>
 <center class="rds_availability_section">
   <!-- start search form tag -->
-  <%= form_tag dashboards_path, method: :get do %>
+  <%= form_tag dbfleet_rds_availbility_path, method: :get do %>
     <%= select_tag(:report_type, options_for_select(["Monthly Report", "Weekly Report", "Daily Report"], selected: params[:report_type]), prompt: "Select Report Type", class: "filter-report" ) %>
     <% years = (2019..Date.today.year).map(&:to_i) %>
 
@@ -18,16 +18,12 @@
       <% end %>
       <% @total_weeks.each do |week_no| %>
         <% start_date, end_date = week_dates(@current_year, week_no, false) %>
-        <%# if week_no > 14 %>
           <option style="font-weight: bold;" value="<%= week_no %>"><%= start_date_end_date_format(start_date, end_date, week_no) %></option>
-        <%# else %>
-          <!-- <option value="<%#= week_no %>" disabled><%#= start_date_end_date_format(start_date, end_date, week_no) %></option> -->
-        <%# end %>
       <% end %>  
     </select>
     <p></p>
-    <% if params[:system_group].kind_of?(Array) %>
-      <%= select_tag(:system_group, options_for_select(@system_groups), prompt: "Select System Group", class: "filter-report") %>
+    <% if params[:default] %>
+      <%= select_tag(:system_group, options_for_select(@system_groups.push('All'), selected: params[:system_group]), prompt: "Select System Group", class: "filter-report") %>
     <% else %>
       <%= select_tag(:system_group, options_for_select(@system_groups, selected: params[:system_group]), prompt: "Select System Group", class: "filter-report") %>
     <% end %>
